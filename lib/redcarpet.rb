@@ -11,14 +11,35 @@ module Redcarpet
 
     # XHTML Renderer
     class XHTML < HTML
-      def initialize(extensions={})
-        super(extensions.merge(:xhtml => true))
+      def initialize(extensions = {})
+        super(extensions.merge(xhtml: true))
       end
     end
 
     # HTML + SmartyPants renderer
     class SmartyHTML < HTML
       include SmartyPants
+    end
+
+    # A renderer object you can use to deal with users' input. It
+    # enables +escape_html+ and +safe_links_only+ by default.
+    #
+    # The +block_code+ callback is also overriden not to include
+    # the lang's class as the user can basically specify anything
+    # with the vanilla one.
+    class Safe < HTML
+      def initialize(extensions = {})
+        super({
+          escape_html: true,
+          safe_links_only: true
+        }.merge(extensions))
+      end
+
+      def block_code(code, lang)
+        "<pre>" \
+          "<code>#{code}</code>" \
+        "</pre>"
+      end
     end
 
     # SmartyPants Mixin module
